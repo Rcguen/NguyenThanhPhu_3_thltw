@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<a href="@Url.Action("Add", "Product")" class="custom-add-btn">Add Product</a>
+
+<div class="table-responsive">
+    <table class="table-custom">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                <img src="@product.ImageUrl" alt="@product.Name" class="product-image" />
+                                <span>@product.Name</span>
+                            </div>
+                        </td>
+                        <td>@product.Price.ToString("C")</td>
+                        <td>@product.Description</td>
+                        <td class="@(product.Category != null ? "category-available" : "category-missing")">
+                        @(product.Category?.Name ?? "No Category")
+                        </td>
+                        <td class="action-buttons">
+                            <a href="@Url.Action("Display", "Product", new { id = product.Id })" class="custom-view-btn">View</a>
+                            <a href="@Url.Action("Update", "Product", new { id = product.Id })" class="custom-edit-btn">Edit</a>
+                            <a href="@Url.Action("Delete", "Product", new { id = product.Id })" class="custom-delete-btn">Delete</a>
+                        </td>
+                    </tr>
+            }
+        </tbody>
+    </table>
+</div>
