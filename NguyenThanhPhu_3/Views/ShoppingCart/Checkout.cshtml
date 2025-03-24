@@ -1,0 +1,25 @@
+﻿@model Order
+<h2 class="mb-4">Checkout</h2>
+
+<div class="card p-4 shadow-sm">
+    <form asp-action="Checkout" method="post">
+        <div class="form-group mb-3">
+            <label asp-for="ShippingAddress" class="form-label fw-bold">Shipping Address</label>
+            <input asp-for="ShippingAddress" class="form-control" placeholder="Enter your address" required />
+            <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Notes" class="form-label fw-bold">Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes (optional)"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2">Place Order</button>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
