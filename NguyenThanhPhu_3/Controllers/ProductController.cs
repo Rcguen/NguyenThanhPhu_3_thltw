@@ -180,7 +180,15 @@ namespace NguyenThanhPhu_3.Controllers
         private async Task LoadCategoriesAsync(int? selectedCategoryId = null)
         {
             var categories = await _categoryRepository.GetAllAsync();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name", selectedCategoryId);
+
+            // Loại bỏ danh mục trùng lặp
+            var distinctCategories = categories
+                .GroupBy(c => c.Id)
+                .Select(g => g.First())
+                .ToList();
+
+            ViewBag.Categories = new SelectList(distinctCategories, "Id", "Name", selectedCategoryId);
         }
+
     }
 }

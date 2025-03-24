@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NguyenThanhPhu_3.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace NguyenThanhPhu_3.Repositories
 {
@@ -52,6 +55,25 @@ namespace NguyenThanhPhu_3.Repositories
             }
             return await _context.Products.Include(p => p.Category)
                 .Where(p => p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm))
+                .ToListAsync();
+        }
+
+        // ✅ Thêm chức năng lọc sản phẩm theo danh mục
+        public async Task<IEnumerable<Product>> GetByCategoryAsync(int categoryId)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .Where(p => p.CategoryId == categoryId)
+                .ToListAsync();
+        }
+
+        // ✅ Thêm chức năng lấy sản phẩm mới nhất
+        public async Task<IEnumerable<Product>> GetLatestProductsAsync(int count)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .OrderByDescending(p => p.Id) // Giả định sản phẩm mới có ID cao hơn
+                .Take(count)
                 .ToListAsync();
         }
     }
