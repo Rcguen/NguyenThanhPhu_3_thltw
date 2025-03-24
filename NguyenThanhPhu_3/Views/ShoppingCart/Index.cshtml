@@ -45,7 +45,17 @@
     <a asp-action="ClearCart" class="btn btn-warning btn-lg">
         <i class="bi bi-x-circle"></i> Clear Cart
     </a>
-    <a asp-controller="ShoppingCart" asp-action="Checkout" class="btn btn-success btn-lg">
-        <i class="bi bi-credit-card"></i> Proceed to Checkout
-    </a>
+    @if (ViewBag.IsCustomer)
+    {
+        <a asp-controller="ShoppingCart" asp-action="Checkout" class="btn btn-success btn-lg">
+            <i class="bi bi-credit-card"></i> Proceed to Checkout
+        </a>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center mt-3">
+            Only customers can place orders.
+        </div>
+    }
+
 </div>
