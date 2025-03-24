@@ -24,6 +24,7 @@ public class ShoppingCartController : Controller
     {
         var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
         ViewBag.CartCount = cart.Items.Sum(i => i.Quantity);
+        ViewBag.IsCustomer = User.IsInRole("Customer"); // Truyền thông tin vai trò sang View
         return View(cart);
     }
 
@@ -63,9 +64,14 @@ public class ShoppingCartController : Controller
         return RedirectToAction("Index");
     }
 
-    [Authorize(Roles = "Customer")]
+    [Authorize]
     public IActionResult Checkout()
     {
+        if (!User.IsInRole("Customer"))
+        {
+            return RedirectToAction("AccessDenied", "Home");
+        }
+
         var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
         if (cart == null || !cart.Items.Any())
         {
@@ -76,9 +82,14 @@ public class ShoppingCartController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "Customer")]
+    [Authorize]
     public async Task<IActionResult> Checkout(Order order)
     {
+        if (!User.IsInRole("Customer"))
+        {
+            return RedirectToAction("AccessDenied", "Home");
+        }
+
         var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
         if (cart == null || !cart.Items.Any())
         {
@@ -87,7 +98,7 @@ public class ShoppingCartController : Controller
         }
 
         var user = await _userManager.GetUserAsync(User);
-        if (user == null) return RedirectToAction("Login", "Account");
+        if (user == null) return RedirectToAction("AccessDenied", "Home");
 
         order.UserId = user.Id;
         order.OrderDate = DateTime.UtcNow;
@@ -110,7 +121,7 @@ public class ShoppingCartController : Controller
     public IActionResult GetCartCount()
     {
         var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
-        int count = cart.Items.Sum(i => i.Quantity);
+        int count = cart.Items.Any() ? cart.Items.Sum(i => i.Quantity) : 0;
         return Json(new { cartCount = count });
     }
 
