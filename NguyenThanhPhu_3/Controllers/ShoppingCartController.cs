@@ -30,12 +30,6 @@ public class ShoppingCartController : Controller
 
     public async Task<IActionResult> AddToCart(int productId, int quantity)
     {
-        if (quantity <= 0)
-        {
-            TempData["Error"] = "Invalid quantity!";
-            return RedirectToAction("Index", "Home");
-        }
-
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null) return NotFound();
 
@@ -45,13 +39,15 @@ public class ShoppingCartController : Controller
             ProductId = productId,
             Name = product.Name,
             Price = product.Price,
-            Quantity = quantity
+            Quantity = quantity,
+            Url = product.ImageUrl // Gán ảnh sản phẩm
         });
 
         HttpContext.Session.SetObjectAsJson("Cart", cart);
         TempData["Message"] = "Product added to cart successfully!";
         return RedirectToAction("Index", "Home");
     }
+
 
     public IActionResult RemoveFromCart(int productId)
     {
